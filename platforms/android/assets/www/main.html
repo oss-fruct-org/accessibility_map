@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        
+		<link rel="stylesheet" href="css/jquery.mobile-1.4.0.min.css"/>
+		<link rel="stylesheet" href="css/jquery.mobile-1.4.0.css"/>
+		<link rel="stylesheet" href="css/map_access.css"/>
+		
+		<script src="js/jquery-1.9.1.min.js"></script>
+		<script src="js/jquery.mobile-1.4.0.min.js"></script>
+		<script src="js/jquery.mobile-1.4.0.js"></script>
+		<script src="js/jquery.fittext.js"></script>
+		<script src="js/underscore-min.js"></script>
+		
+		<script src="http://openlayers.org/api/OpenLayers.js"></script>
+
+		<!--<script type="text/javascript" src="cordova.js"></script>-->
+		
+		<title>Map Access</title>
+    </head>
+	
+    <body>
+        <div data-role="page" id="catalog">
+			<header data-role="header" data-position="fixed">
+				
+			</header>
+    
+			<section data-role="content" class="category">
+				<script type="text/javascript" src="js/map_access.js"></script>
+				
+			</section>
+       
+			<footer data-role="footer" data-position="fixed" data-tap-toggle="false" data-id="persistent" class="menu_futter" 
+			style="border-bottom-width: 0px; padding-bottom: 0px;">
+				<div data-role="navbar"  class="mnbr" >
+					<ul >
+						<li><a href="#catalog" class="ui-btn ui-icon-folder-open ui-btn-icon-left" data-theme="b" >Каталог</a></li>
+						<li><a href="#OSMap" class="ui-btn ui-icon-globe ui-btn-icon-left" data-theme="b" >Карта</a></li>
+						<li><a href="#settings" class="ui-btn ui-icon-gear ui-btn-icon-left" data-theme="b" >Настройки</a></li>
+					</ul>
+				</div>				
+			</footer>
+		</div>
+		
+		<div data-role="page" id="list">
+			<header data-role="header" data-position="fixed" data-tap-toggle="false" data-id="persistent" data-theme="b" class="menu_header">
+			<div class="mnhdr">
+				<span class="ui-title"></span>
+				
+				<a href="#" style="top:0; left:0;" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-btn-icon-left ui-icon-arrow-l" onClick="history.go(-1);return true;" >Назад</a>
+				
+				<div class="ui-btn-right" style="top:0; right:0; font-size: initial;">
+					<a href="#" class="new ui-btn" style="
+						padding-top: 0px;
+						padding-bottom: 0px;
+						padding-right: 0px;
+						padding-left: 0px;
+					"></a>
+					<a href="#popupLegend" data-rel="popup" data-transition="slidedown" data-position-to="window" class="ui-btn" style="
+						padding-top: 0px;
+						padding-bottom: 0px;
+						padding-right: 10px;
+						padding-left: 10px;
+					"><img class = "barUp" src="img/color/color.png"></a>
+					<a href="#popupFilter" data-rel="popup" data-transition="slidedown" data-position-to="window" class="ui-btn ui-btn-b ui-btn-inline ui-btn-icon-left ui-icon-filter">Фильтр</a>
+				</div>
+				<div data-role="popup" id="popupLegend" data-theme="b">
+					<table style="text-align: left;">
+						<tbody>
+						<tr>
+							<td><img src="img/color/red.png" width="32" height="32"></td>
+							<td><b>трудно доступен</b></td>
+						</tr>
+						<tr>
+							<td><img src="img/color/yellow.png" width="32" height="32"></td>
+							<td><b>условно доступен</b></td>
+						</tr>
+						<tr>
+							<td><img src="img/color/grey.png" width="32" height="32"></td>
+							<td><b>нет информации</b></td>
+						</tr>
+						<tr>
+							<td><img src="img/color/green.png" width="32" height="32"></td>
+							<td><b>полностью доступен</b></td>
+						</tr>
+						</tbody>
+					</table>
+			        
+				</div>
+				
+				<div data-role="popup" id="popupFilter" data-theme="b">
+				
+			        <div style="text-align: center;">
+						<h3 class="ui-bar ui-bar-b">Категория</h3>
+						<div data-role="controlgroup" data-type="horizontal" class="filter_group">	
+						</div>
+					</div>
+							
+					<div style="text-align: center;">
+						<h3 class="ui-bar ui-bar-b">Доступность для категории</h3>
+						<div data-role="controlgroup" data-type="horizontal" class="filter_access">
+						</div>
+					</div>	
+
+					<div style="text-align: center;">
+						<a href="#" class="ui-btn" onclick="resetFilter()">Сбросить фильтр</a>
+					</div>
+				</div>
+			</div>	
+			</header>
+			
+			<section data-role="content" data-theme="a">					
+				<form class="ui-filterable">
+					<input id="search-input" data-type="search" value="" data-theme="a">
+				</form>
+				<ul data-role="listview" data-filter="true" data-input="#search-input" id="list_objects">				
+				</ul> 
+			</section>
+			
+			<footer data-role="footer" data-position="fixed" data-tap-toggle="false" data-id="persistent" class="menu_futter" style="border-bottom-width: 0px; padding-bottom: 0px;">
+				<div data-role="navbar" class="mnbr">
+					<ul>
+						<li><a href="#catalog" class="ui-btn ui-icon-folder-open ui-btn-icon-left" data-theme="b">Каталог</a></li>
+						<li><a href="#OSMap" class="ui-btn ui-icon-globe ui-btn-icon-left" data-theme="b">Карта</a></li>
+						<li><a href="#settings" class="ui-btn ui-icon-gear ui-btn-icon-left" data-theme="b">Настройки</a></li>
+					</ul>
+				</div>
+			</footer>
+			
+			<script type="text/javascript" src="js/output.js"></script>
+		
+		</div>
+		
+		<div data-role="page" id="info">
+			<header data-role="header" data-position="fixed" data-tap-toggle="false" data-id="persistent" data-theme="b" class="menu_header">
+			<div class="mnhdr">
+				<span class="ui-title"></span>
+				<a href="#" style="top:0; left:0;" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-btn-icon-left ui-icon-arrow-l" onClick="history.go(-1);return true;">Назад</a>
+			</div>
+			</header>
+			
+			<section class="list_info">
+			</section>
+			
+			<footer data-role="footer" data-position="fixed" data-tap-toggle="false" data-id="persistent" class="menu_futter">
+				<div data-role="navbar" class="mnbr">
+					<ul>
+						<li><a href="#catalog" class="ui-btn ui-icon-folder-open ui-btn-icon-left" data-theme="b">Каталог</a></li>
+						<li><a href="#OSMap" class="ui-btn ui-icon-globe ui-btn-icon-left" data-theme="b">Карта</a></li>
+						<li><a href="#settings" class="ui-btn ui-icon-gear ui-btn-icon-left" data-theme="b">Настройки</a></li>
+					</ul>
+				</div>
+			</footer>
+			<script type="text/javascript" src="js/show_info.js"></script>
+		</div>
+		
+		<div data-role="page" id="OSMap" >
+			<header data-role="header" data-position="fixed" data-tap-toggle="false" data-id="persistent" data-theme="b" class="menu_header">
+				<div class="mnhdr">	
+					<span class="ui-title"></span>
+					<a href="#" style="top:0; left:0;" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-btn-icon-left ui-icon-arrow-l" onClick="history.go(-1);return true;">Назад</a>
+					
+					<div class="ui-btn-right" style="top:0; right:0; font-size: initial;">
+					<a href="#" class="new ui-btn" style="
+						padding-top: 0px;
+						padding-bottom: 0px;
+						padding-right: 0px;
+						padding-left: 0px;
+					"></a>
+					<a href="#popupLegendMap" data-rel="popup" data-transition="slidedown" data-position-to="window" class="ui-btn" style="
+						padding-top: 0px;
+						padding-bottom: 0px;
+						padding-right: 10px;
+						padding-left: 10px;
+					"><img class = "barUp" src="img/color/color.png" ></a>
+					<a href="#popupFilterMap" data-rel="popup" data-transition="slidedown" data-position-to="window" class="ui-btn ui-btn-b ui-btn-inline ui-btn-icon-left ui-icon-filter">Фильтр</a>
+				</div>
+				<div data-role="popup" id="popupLegendMap" data-theme="b">
+					<table style="text-align: left;">
+						<tbody>
+						<tr>
+							<td><img src="img/color/red.png" width="32" height="32"></td>
+							<td><b>трудно доступен</b></td>
+						</tr>
+						<tr>
+							<td><img src="img/color/yellow.png" width="32" height="32"></td>
+							<td><b>условно доступен</b></td>
+						</tr>
+						<tr>
+							<td><img src="img/color/grey.png" width="32" height="32"></td>
+							<td><b>нет информации</b></td>
+						</tr>
+						<tr>
+							<td><img src="img/color/green.png" width="32" height="32"></td>
+							<td><b>полностью доступен</b></td>
+						</tr>
+						</tbody>
+					</table>
+			        
+				</div>
+					<div data-role="popup" id="popupFilterMap" data-theme="b">
+				
+						<div style="text-align: center;">
+							<h3 class="ui-bar ui-bar-b">Категория</h3>
+							<div data-role="controlgroup" data-type="horizontal" class="filter_group_map">	
+							</div>
+						</div>
+
+						<div style="text-align: center;">
+							<a href="#" class="ui-btn" id='filterMap' onclick="resetFilterMap()">Сбросить фильтр</a>
+						</div>
+					</div> 
+				</div>
+			</header>
+			<section data-role="content" id="content" >
+				<div id="map" style="height:100%; data-fullscreen="true"></div> 
+			</section>
+			
+			<footer data-role="footer" data-position="fixed" data-tap-toggle="false" data-id="persistent" class="menu_futter" style="border-bottom-width: 0px; padding-bottom: 0px;">
+				<div data-role="navbar" class="mnbr">
+					<ul>
+						<li><a href="#catalog" class="ui-btn ui-icon-folder-open ui-btn-icon-left" data-theme="b">Каталог</a></li>
+						<li><a href="#OSMap" class="ui-btn ui-icon-globe ui-btn-icon-left" data-theme="b">Карта</a></li>
+						<li><a href="#settings" class="ui-btn ui-icon-gear ui-btn-icon-left" data-theme="b">Настройки</a></li>
+					</ul>
+				</div>
+			</footer>
+			<script type="text/javascript" src="js/show_map.js"></script>
+		</div>
+		
+		<div data-role="page" id="settings">
+			<header data-role="header" data-position="fixed" data-tap-toggle="false" data-id="persistent" data-theme="b" class="menu_header">
+			<div class="mnhdr">
+				<span class="ui-title"></span>
+				<a href="#" style="top:0; left:0;" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-btn-icon-left ui-icon-arrow-l" onClick="history.go(-1);return true;">Назад</a>
+			</div>
+			</header>
+			
+			<section data-role="content">
+					<div style="text-align: center;">
+						<h3 class="ui-bar ui-bar-a">Категория инвалидности</h3>
+						<div data-role="controlgroup" data-type="horizontal" class="filter_group_setting">	
+						</div>
+					</div>
+			</section>
+			
+			<footer data-role="footer" data-position="fixed" data-tap-toggle="false" data-id="persistent" class="menu_futter" style="border-bottom-width: 0px; padding-bottom: 0px;">
+				<div data-role="navbar" class="mnbr">
+					<ul>
+						<li><a href="#catalog" class="ui-btn ui-icon-folder-open ui-btn-icon-left" data-theme="b">Каталог</a></li>
+						<li><a href="#OSMap" class="ui-btn ui-icon-globe ui-btn-icon-left" data-theme="b">Карта</a></li>
+						<li><a href="#settings" class="ui-btn ui-icon-gear ui-btn-icon-left" data-theme="b">Настройки</a></li>
+					</ul>
+				</div>
+			</footer>
+			<script type="text/javascript" src="js/settings.js"></script>
+		</div>
+        
+		<script type="text/javascript" charset="utf-8">
+            document.addEventListener("deviceready", loaded, false);
+            function loaded() {
+                navigator.geolocation.getCurrentPosition(success, error, {timeout: 10000, enableHighAccuracy: true, maximumAge: 1000});
+            }
+            function success(position) {
+				coordinate1 = position.coords.latitude;
+				coordinate2 = position.coords.longitude;
+            }
+			function error(error) {
+                alert(error.message);
+            }
+         </script>
+        
+    </body>
+</html>
