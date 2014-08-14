@@ -1,0 +1,83 @@
+<resources>
+
+    <style name="Theme.Accessibilitymap" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_accessibilitymap</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Accessibilitymap</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Accessibilitymap</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Accessibilitymap</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Accessibilitymap</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Accessibilitymap</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_accessibilitymap</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_accessibilitymap</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Accessibilitymap</item>
+
+
+    </style>
+
+    <style name="ActionBar.Solid.Accessibilitymap" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
+        <item name="android:background">@drawable/ab_solid_accessibilitymap</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_accessibilitymap</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_accessibilitymap</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Accessibilitymap</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Accessibilitymap" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_accessibilitymap</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Accessibilitymap</item>
+    </style>
+
+    <style name="PopupMenu.Accessibilitymap" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_accessibilitymap</item>
+    </style>
+
+    <style name="DropDownListView.Accessibilitymap" parent="@android:style/Widget.Holo.Light.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_accessibilitymap</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Accessibilitymap" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_accessibilitymap</item>
+    </style>
+
+    <style name="DropDownNav.Accessibilitymap" parent="@android:style/Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/spinner_background_ab_accessibilitymap</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_accessibilitymap</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_accessibilitymap</item>
+    </style>
+
+    <style name="ProgressBar.Accessibilitymap" parent="@android:style/Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_accessibilitymap</item>
+    </style>
+
+    <style name="ActionButton.CloseMode.Accessibilitymap" parent="@android:style/Widget.Holo.Light.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_accessibilitymap</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Accessibilitymap.Widget" parent="@android:style/Theme.Holo">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Accessibilitymap</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Accessibilitymap</item>
+    </style>
+
+    <style name="availability_item">
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="drawer_textview">
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+    </style>
+
+    <style name="PointInfoListText">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="PointInfoListTextMedium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+
+</resources>
