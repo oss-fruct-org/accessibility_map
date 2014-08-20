@@ -18,15 +18,23 @@
         android:theme="@style/Theme.Accessibilitymap" >
         <activity
             android:name=".ActivityMain"
+            android:hardwareAccelerated="true"
             android:label="@string/title_activity_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
         <activity android:name=".ActivityPointInfo"
+                  android:hardwareAccelerated="true"
             android:parentActivityName=".ActivityMain">
+        </activity>
+
+        <activity android:name=".ActivitySearchResults"
+                  android:hardwareAccelerated="true"
+                  android:parentActivityName=".ActivityMain">
         </activity>
 
         <meta-data

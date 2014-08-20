@@ -46,13 +46,30 @@
             android:visibility="gone"
             android:padding="5dp"/>
 
-    <TextView
-            android:id="@+id/pointinfo_header_site"
-            android:layout_width="match_parent"
+    <LinearLayout
+            android:id="@+id/pointinfo_header_web"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/PointInfoListTextMedium"
+            android:orientation="horizontal"
             android:visibility="gone"
-            android:paddingTop="5dp"/>
+            android:padding="5dp">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/PointInfoListTextMedium"
+                android:text="@string/web_site"/>
+
+        <TextView
+                android:id="@+id/pointinfo_header_site"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/PointInfoListTextMedium"
+                android:textColor="@color/blue"/>
+
+    </LinearLayout>
+
+
 
 
 </LinearLayout>

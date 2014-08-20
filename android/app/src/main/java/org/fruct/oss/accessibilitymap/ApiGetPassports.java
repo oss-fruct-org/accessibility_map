@@ -19,9 +19,11 @@ import java.net.URL;
  */
 public class ApiGetPassports extends AsyncTask<String, Void, Boolean> {
 
-    private Context context;
+    protected Context context;
 
     private String requestUrl;
+
+    protected String currentOperation;
 
     Uri.Builder b;
 
@@ -41,6 +43,10 @@ public class ApiGetPassports extends AsyncTask<String, Void, Boolean> {
         Log.d("accmap", requestUrl);
     }
 
+    protected String getCurrentOperation() {
+        return currentOperation;
+    }
+
 
     @Override
     protected Boolean doInBackground(String... urls) {
@@ -49,7 +55,12 @@ public class ApiGetPassports extends AsyncTask<String, Void, Boolean> {
             return null;
         }
 
+        int currentItemId = 0;
+
         try {
+
+            Log.d("accmap getpass", "Preparing");
+
             URL url = new URL(requestUrl);
             InputStream input = new BufferedInputStream(url.openStream());
 
@@ -59,22 +70,31 @@ public class ApiGetPassports extends AsyncTask<String, Void, Boolean> {
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
 
+            Log.d("accmap getpass", "Downloading");
+
             while ((line = reader.readLine()) != null)
                 sb.append(line);
+
+            Log.d("accmap getpass", "Downloading finished");
 
             strJson = sb.toString();
             strJson = strJson.substring(strJson.indexOf("(") + 1, strJson.lastIndexOf(")"));
 
-            Log.d("accmap", strJson + " ");
+            Log.d("accmap getpass", "Loading to memory");
 
             JSONArray json = new JSONArray(strJson);
 
+            Log.d("accmap getpass", "Loading to memory finished");
+
             DBHelper dbHelper = new DBHelper(context);
 
+            Log.d("accmap getpass", "parsing");
+
             for (int i = 0; i < json.length(); i++) {
+
                 JSONObject point = json.getJSONObject(i);
 
-                int passportId = point.getInt("PassportAccessibilityId");
+                int passportId = currentItemId = point.getInt("Id");
                 String name = point.getString("Name");
                 String objectName = point.getString("ObjectName");
                 String address = point.getString("Address");
@@ -86,35 +106,46 @@ public class ApiGetPassports extends AsyncTask<String, Void, Boolean> {
                 String site = point.getString("Site");
 
                 JSONArray scopesArray = point.getJSONArray("Scopes");
+
                 for (int m = 0; m < scopesArray.length(); m++) {
 
                     int scope = scopesArray.getJSONObject(m).getInt("Id");
 
                     JSONArray accessibilityArray = point.getJSONArray("Accessibility");
 
-                    if (passportId == 344)
-                        Log.d("accmap", "len:" + accessibilityArray.length() + " " + accessibilityArray.toString());
+                    //if (passportId == 344)
+                    //    Log.d("accmap", "len:" + accessibilityArray.length() + " " + accessibilityArray.toString());
 
                     for (int j = 0; j < accessibilityArray.length(); j++) {
 
                         JSONObject accessibilityPoint = accessibilityArray.getJSONObject(j);
                         int disabilityId = accessibilityPoint.getJSONObject("Categorie").getInt("Id");
-                        int maintenanceId = accessibilityPoint.getJSONObject("MaintenanceForm").getInt("Id");
+
+                        int maintenanceId;
+                        if (!accessibilityPoint.isNull("MaintenanceForm"))
+                            maintenanceId = accessibilityPoint.getJSONObject("MaintenanceForm").getInt("Id");
+                        else
+                            break; // Maintenance can be null, so go to next iteration
 
                         JSONArray functionalAreaArray = accessibilityPoint.getJSONArray("FunctionalAreas");
 
-                        if (passportId == 344)
-                            Log.d("accmap", functionalAreaArray.toString() + " ");
+                        /*if (passportId == 344)
+                            Log.d("accmap", functionalAreaArray.toString() + " ");*/
 
                         for (int k = 0; k < functionalAreaArray.length(); k++) {
+
+                            if (isCancelled()) {
+                                return null;
+                            }
+
                             JSONObject functionalAreaPoint = functionalAreaArray.getJSONObject(k);
                             int functionalId = functionalAreaPoint.getJSONObject("FunctionalArea").getInt("Id");
                             int accessibilityId = functionalAreaPoint.getJSONObject("Type").getInt("Id");
 
-                            if (passportId == 344) {
+                            /*if (passportId == 344) {
                                 Log.d("accmap", "i=" + i + " m=" + m + " j=" + j + " k=" + k);
-                                Log.d("acc getpass", disabilityId + " " + name + " " + functionalId + " " + accessibilityId + " " + functionalAreaArray.length());
-                            }
+                                Log.d("acc site is ", site);
+                            }*/
                             dbHelper.addPoint(
                                     passportId,
                                     name,
@@ -136,13 +167,13 @@ public class ApiGetPassports extends AsyncTask<String, Void, Boolean> {
                     }
                 }
 
-                //Log.d("accmap", " "  + json.getJSONObject(i).getString("Name"));
             }
+            Log.d("accmap getpass", "Parsing finished");
 
             return true;
 
         } catch (Exception e) {
-            Log.e("accmap getPassports cycle", e.toString() + " ");
+            Log.e("accmap getPassports cycle", e.toString() + " " + currentItemId);
             return false;
         }
     }

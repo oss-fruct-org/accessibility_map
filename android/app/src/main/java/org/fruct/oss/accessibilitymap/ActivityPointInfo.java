@@ -1,6 +1,7 @@
 package org.fruct.oss.accessibilitymap;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -9,14 +10,14 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,10 @@ public class ActivityPointInfo extends FragmentActivity {
     int selectedDisabilityId;
 
     ListView listView;
+
+    LatLng objectLocation = null;
+
+    boolean isMapLinkShowing = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,7 @@ public class ActivityPointInfo extends FragmentActivity {
         Intent intent = getIntent();
         passportId = Integer.parseInt(intent.getStringExtra("id"));
         selectedDisabilityId = intent.getIntExtra("disabilityId", 0);
+        isMapLinkShowing = true;//!intent.getBooleanExtra("isMapLinkShowing", true);
 
         Log.d("accmap", "passid: " + passportId + " disability:" + selectedDisabilityId);
 
@@ -61,7 +67,7 @@ public class ActivityPointInfo extends FragmentActivity {
         String site = null;
 
 
-        Cursor cursor = dbHelper.getReadableDatabase().query(false, "points", new String[]{}, "passid=" + passportId + " and " + "disability=" + selectedDisabilityId, null, null, null, null, null);
+        Cursor cursor = dbHelper.getReadableDatabase().query(true, "points", new String[]{}, "passid=" + passportId + " and " + "disability=" + selectedDisabilityId, null, null, null, null, null);
 
         Log.d("accmap", "pointInfo cursor: " + cursor.getCount() + " ");
 
@@ -77,6 +83,10 @@ public class ActivityPointInfo extends FragmentActivity {
             int indexGetBy = cursor.getColumnIndex("route");
             int indexPhone = cursor.getColumnIndex("phone");
             int indexSite = cursor.getColumnIndex("site");
+
+            int indexLatitude = cursor.getColumnIndex("latitude");
+            int indexLongitude = cursor.getColumnIndex("longitude");
+            objectLocation = new LatLng(cursor.getDouble(indexLatitude), cursor.getDouble(indexLongitude));
 
             name = cursor.getString(indexName);
             objectName = cursor.getString(indexObjectName);
@@ -112,6 +122,9 @@ public class ActivityPointInfo extends FragmentActivity {
         listView.setAdapter(adapter);
         listView.addHeaderView(createHeader(name, objectName, address, getBy, phone, site));
 
+        cursor.close();
+        dbHelper.close();
+
     }
 
     private View createHeader(String name, String objectName, String address, String getby, final String phone, final String site) {
@@ -121,13 +134,13 @@ public class ActivityPointInfo extends FragmentActivity {
         ((TextView) v.findViewById(R.id.pointinfo_header_address)).setText(address);
 
         if (getby != null && !getby.equals("null")) {
-            ((TextView) v.findViewById(R.id.pointinfo_header_getby)).setText(getby);
+            ((TextView) v.findViewById(R.id.pointinfo_header_getby)).setText(getString(R.string.how_to_get) + getby);
             v.findViewById(R.id.pointinfo_header_getby).setVisibility(View.VISIBLE);
         }
 
         if (phone != null && !phone.equals("null")) {
             Log.d("accmap", "phone is " + phone);
-            ((TextView) v.findViewById(R.id.pointinfo_header_phone)).setText(getString(R.string.telephone) + " " + phone);
+            ((TextView) v.findViewById(R.id.pointinfo_header_phone)).setText(getString(R.string.telephone) + phone);
             v.findViewById(R.id.pointinfo_header_phone).setVisibility(View.VISIBLE);
             v.findViewById(R.id.pointinfo_header_phone).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -140,19 +153,24 @@ public class ActivityPointInfo extends FragmentActivity {
         }
 
         if (site != null && !site.equals("null")) {
-            Log.d("accmap", "site is " + site);
-            ((TextView) v.findViewById(R.id.pointinfo_header_site)).setText(site);
-            v.findViewById(R.id.pointinfo_header_site).setVisibility(View.VISIBLE);
+
+            SpannableString content = new SpannableString(site);
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+
+            ((TextView) v.findViewById(R.id.pointinfo_header_site)).setText(content);
+
+            v.findViewById(R.id.pointinfo_header_web).setVisibility(View.VISIBLE);
             v.findViewById(R.id.pointinfo_header_site).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    String url = site;
-                    if (!site.startsWith("http://") || !site.startsWith("https://"))
-                        url = "http://" + site;
+                    String url1 = site;
+                    if (!site.startsWith("http://") && !site.startsWith("https://")) {
+                        url1 = "http://" + site;
+                    }
 
                     Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(url));
+                    i.setData(Uri.parse(url1));
                     startActivity(i);
                 }
             });
@@ -234,8 +252,38 @@ public class ActivityPointInfo extends FragmentActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //if (!isMapLinkShowing) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.activity_pointinfo, menu);
+        //}
 
+        return true;
+    }
 
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+
+        int itemId = item.getItemId();
+
+        switch (itemId) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.action_onmap:
+                if (objectLocation == null)
+                    return false;
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(Constants.RESULT_INTENT_VALUE, objectLocation.latitude + "," + objectLocation.longitude);
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
+                break;
+        }
+
+        return true;
+    }
 
 
     @Override

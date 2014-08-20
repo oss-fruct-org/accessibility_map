@@ -28,6 +28,9 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         try {
+
+            //database.setLocale(context.getResources().getConfiguration().locale);
+
             // Scopes
             Log.d("accmap db", "scopes");
             database.execSQL("" +
@@ -85,7 +88,9 @@ public class DBHelper extends SQLiteOpenHelper {
                     "id integer primary key autoincrement," +
                     "passid integer," + // Passport id from server
                     "name text," +
+                    "name_uppercase text," + // Only for search purposes. SQLite does not support like operator for non-english lang
                     "objectname text," +
+                    "objectname_uppercase text," + // Only for search purposes
                     "address text," +
                     "route text," +
                     "longitude real," +
@@ -175,7 +180,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cv.put("passid", passportId);
         cv.put("name", name);
+        cv.put("name_uppercase", name.toUpperCase());
         cv.put("objectname", objectName);
+        cv.put("objectname_uppercase", objectName.toUpperCase());
         cv.put("address", address);
         cv.put("latitude", latitude);
         cv.put("longitude", longitude);
@@ -195,10 +202,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-  /*  public void clearDatabase() {
-        context.deleteDatabase(DB_NAME);
-        this.onCreate(getWritableDatabase());
-    }*/
+
+    public int getScopeIdByName(String name) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(true, "scopes", new String[]{}, "name='" + name + "'", null, null, null, null, null);
+
+        int id = -1; // FIXME: or -1?
+        Log.d("accmap", "getScopeIdByName: " + cursor.getCount());
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(cursor.getColumnIndex("id"));
+        }
+
+        cursor.close();
+        db.close();
+
+        return id;
+    }
 
     // Add new scope
     public void addScope(int id, String name) {
@@ -256,5 +275,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     SQLiteDatabase.CREATE_IF_NECESSARY);
         }
     }
+
 
 }
