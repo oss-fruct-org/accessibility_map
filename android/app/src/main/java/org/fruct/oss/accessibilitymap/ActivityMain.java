@@ -186,6 +186,11 @@ public class ActivityMain extends FragmentActivity {
 
         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
+        if (location == null) {
+            Toast.makeText(getApplicationContext(), getString(R.string.cannot_obtain_location_data), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 12);
         mMap.moveCamera(cameraUpdate);
@@ -611,8 +616,8 @@ public class ActivityMain extends FragmentActivity {
 
 
     private void setUpMap() {
-        //mMap.setMyLocationEnabled(true);
-        //mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
 

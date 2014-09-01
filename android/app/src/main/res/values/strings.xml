@@ -31,5 +31,6 @@
     <string name="web_site">Веб-сайт:&#160;</string>
     <string name="how_to_get">Как добраться:&#160;</string>
     <string name="all_scopes">Все сферы деятельности</string>
+    <string name="cannot_obtain_location_data">Невозможно получить данные о местоположении</string>
 
 </resources>
