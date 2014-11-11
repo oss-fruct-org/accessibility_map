@@ -1,6 +1,5 @@
 package org.fruct.oss.accessibilitymap;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,9 @@ import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -21,7 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-public class ActivityPointInfo extends FragmentActivity {
+public class ActivityPointInfo extends ActionBarActivity {
 
     Location location;
 
@@ -39,7 +40,11 @@ public class ActivityPointInfo extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pointinfo);
 
-        ActionBar actionBar = getActionBar();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -263,7 +268,7 @@ public class ActivityPointInfo extends FragmentActivity {
     }
 
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
 
         int itemId = item.getItemId();
 
@@ -282,12 +287,6 @@ public class ActivityPointInfo extends FragmentActivity {
                 break;
         }
 
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
 

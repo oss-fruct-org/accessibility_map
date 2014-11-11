@@ -14,10 +14,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
@@ -30,7 +31,7 @@ import com.google.android.gms.maps.model.*;
 
 import java.util.ArrayList;
 
-public class ActivityMain extends FragmentActivity {
+public class ActivityMain extends ActionBarActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
@@ -47,7 +48,6 @@ public class ActivityMain extends FragmentActivity {
     ImageButton searchButton;
 
     Thread markerAddingThread = null;
-
 
     SharedPreferences sharedPreferences;
 
@@ -66,6 +66,12 @@ public class ActivityMain extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUpMapIfNeeded();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, 0);
         int savedDisabilityId = sharedPreferences.getInt(Constants.SP_CHOOSED_DISABILITY, 1);
@@ -101,31 +107,22 @@ public class ActivityMain extends FragmentActivity {
                 searchField.setText("");
             }
         });
-        /*searchField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });*/
+        mDrawerToggle = new ActionBarDrawerToggle(this,
+                mDrawerLayout,
+                toolbar,
+                R.string.abc_action_bar_home_description,
+                R.string.abc_action_mode_done) {
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_drawer, R.string.abc_action_bar_home_description, R.string.abc_action_mode_done) {
-
-            /** Called when a drawer has settled in a completely closed state. */
+            // Called when a drawer has settled in a completely closed state
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 closeKeyboard();
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
-            /** Called when a drawer has settled in a completely open state. */
+            //** Called when a drawer has settled in a completely open state.
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 closeKeyboard();
@@ -220,22 +217,22 @@ public class ActivityMain extends FragmentActivity {
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                //try {
+                try {
                     getListScopes.cancel(true);
                     getListMaintenance.cancel(true);
                     getListFunctional.cancel(true);
                     getListDisaibilities.cancel(true);
                     getListAccessibilities.cancel(true);
 
-                /*} catch (Exception e) {
+                } catch (Exception e) {
                     Log.e("accmap", e.toString());
-                }*/
+                }
 
-                //try {
+                try {
                     getPassports.cancel(true);
-                /*} catch (Exception e) {
+                } catch (Exception e) {
                     Log.e("accmap", e.toString());
-                }*/
+                }
             }
         });
         dialog.show();
@@ -449,7 +446,7 @@ public class ActivityMain extends FragmentActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        //mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     public void prepareSpinner() {
