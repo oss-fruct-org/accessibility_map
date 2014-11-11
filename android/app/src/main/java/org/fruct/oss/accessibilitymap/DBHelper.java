@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.fruct.oss.accessibilitymap.Model.Accessibility;
+import org.fruct.oss.accessibilitymap.Model.Passport;
+
 /**
  * Created by alexander on 21.07.14.
  */
@@ -169,8 +172,37 @@ public class DBHelper extends SQLiteOpenHelper {
         return scopeName;
     }
 
-    public void addPoint(int passportId, String name, String objectName, String address, double latitude, double longitude, int scopeId,
-                         int disabilityId, int maintenanceId, int functionalId, int accessibilityId, String route,
+    public void addPassport(Passport passport) {
+
+        for (int i = 0; i < passport.scopes.size(); i++) {
+            for (int j = 0; j < passport.accessibilities.size(); j++) {
+                for (int k = 0; k < passport.accessibilities.get(j).functionalAreas.size(); k++) {
+                    try {
+                        addPoint(passport.id,
+                                passport.name,
+                                passport.objectName,
+                                passport.address,
+                                passport.latitude,
+                                passport.longitude,
+                                passport.scopes.get(i).id,
+                                passport.accessibilities.get(j).category.id,
+                                passport.accessibilities.get(j).maintenanceForm.id,
+                                passport.accessibilities.get(j).functionalAreas.get(k).functionalArea.id,
+                                passport.accessibilities.get(j).functionalAreas.get(k).accessibilityType.id,
+                                passport.route,
+                                passport.contacts,
+                                passport.site
+                        );
+                    } catch (NullPointerException e) {
+                        Log.e("accmap", passport.id + " " + passport.name);
+                    }
+                }
+            }
+        }
+    }
+
+    public void addPoint(long passportId, String name, String objectName, String address, double latitude, double longitude, long scopeId,
+                         long disabilityId, long maintenanceId, long functionalId, long accessibilityId, String route,
                          String phone, String site) {
 
         //Log.d("accmap", name + " " + objectName + address);

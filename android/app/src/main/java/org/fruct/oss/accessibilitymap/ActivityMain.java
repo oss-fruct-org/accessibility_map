@@ -211,7 +211,7 @@ public class ActivityMain extends ActionBarActivity {
     }
 
     public void updateDatabaseWithDialog(Context context) {
-        dialog = new ProgressDialog(context);
+        dialog = new ProgressDialog(ActivityMain.this);
         dialog.setMessage(getString(R.string.refreshing));
         dialog.setCancelable(true);
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -531,6 +531,7 @@ public class ActivityMain extends ActionBarActivity {
                     Toast.makeText(context, getString(R.string.downloading_complete), Toast.LENGTH_SHORT).show();
                     prepareSpinner();
                     onDisabilityChecked(null);
+                    Log.d("accmap time end", System.currentTimeMillis() + "ms");
                 } else {
                     Toast.makeText(context, "Ошибка во время получения данных", Toast.LENGTH_LONG).show();
                 }
@@ -580,6 +581,7 @@ public class ActivityMain extends ActionBarActivity {
             public void onPreExecute() {
                 super.onPreExecute();
                 dbHelper.deleteAll();
+                Log.d("accmap time start", System.currentTimeMillis() + "ms");
             }
 
             @Override
